@@ -15,6 +15,8 @@ type Particle = {
   vx: number;
   vy: number;
   type: number;
+  visX: number;
+  visY: number;
 };
 
 const rules: number[][] = [];
@@ -44,7 +46,15 @@ const init = () => {
     let angle = random() * PI * 2;
     let radius = 50 * sqrt(random());
     let [x, y] = moveByAngle(width / 2, height / 2, angle, radius);
-    particles[i] = { x, y, vx: 0, vy: 0, type: i % typesAmount };
+    particles[i] = {
+      x,
+      y,
+      vx: 0,
+      vy: 0,
+      type: i % typesAmount,
+      visX: x,
+      visY: y,
+    };
   }
 };
 
@@ -94,8 +104,11 @@ setInterval(() => {
     p.vx *= damping;
     p.vy *= damping;
 
-    const hue = 360 / typesAmount * p.type;
+    p.visX = lerp(p.visX, p.x, 0.1);
+    p.visY = lerp(p.visY, p.y, 0.1);
+
+    const hue = (360 / typesAmount) * p.type;
     context.fillStyle = `hsl(${hue}, 50%, 50%, .5)`;
-    drawCircle(p.x, p.y);
+    drawCircle(p.visX, p.visY);
   }
 }, 1000 / 60);
