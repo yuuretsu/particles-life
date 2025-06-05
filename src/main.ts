@@ -1,18 +1,10 @@
-import { lerp, moveByAngle } from "./lib";
+import { createRandom, lerp, moveByAngle } from "./lib";
 
 const { PI, sqrt, min, max, atan2, hypot } = Math;
 
 const canvas = document.querySelector(`canvas`)!;
 document.body.appendChild(canvas);
 const context = canvas.getContext(`2d`)!;
-
-const createRandom = (seed: number) => {
-  const m = 34359738337;
-  return () => {
-    seed = (185852 * seed) % m;
-    return seed / m;
-  }
-};
 
 let variation = 1;
 let random = createRandom(variation);
