@@ -20,22 +20,22 @@ type Particle = {
 const rules: number[][] = [];
 const particles: Particle[] = [];
 
+const typesAmount = 6;
 
-
-let drawCircle = (x: number, y: number) => {
+const drawCircle = (x: number, y: number) => {
   context.beginPath();
   context.arc(x, y, 4, 0, 2 * PI);
   context.fill();
 };
 
-let initialize = () => {
+const init = () => {
   random = createRandom(variation++);
   let width = (canvas.width = innerWidth);
   let height = (canvas.height = innerHeight);
 
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < typesAmount; i++) {
     rules[i] = [];
-    for (let j = 0; j < 6; j++) {
+    for (let j = 0; j < typesAmount; j++) {
       rules[i][j] = 200 * (random() - 0.5);
     }
   }
@@ -44,34 +44,36 @@ let initialize = () => {
     let angle = random() * PI * 2;
     let radius = 50 * sqrt(random());
     let [x, y] = moveByAngle(width / 2, height / 2, angle, radius);
-    particles[i] = { x, y, vx: 0, vy: 0, type: i % 6 };
+    particles[i] = { x, y, vx: 0, vy: 0, type: i % typesAmount };
   }
 };
 
-onclick = initialize;
-initialize();
+onclick = init;
+init();
 
 setInterval(() => {
-  let width = canvas.width;
-  let height = canvas.height;
+  const width = canvas.width;
+  const height = canvas.height;
   context.fillStyle = "rgb(0,0,0,0.3)";
   context.fillRect(0, 0, width, height);
 
   for (const p of particles) {
-    let { x, y, type } = p;
+    const { x, y, type } = p;
 
     for (const o of particles) {
       if (p !== o) {
-        let g = rules[type][o.type];
-        let dx = x - o.x;
-        let dy = y - o.y;
+        const g = rules[type][o.type];
+        const dx = x - o.x;
+        const dy = y - o.y;
         let distSq = dx ** 2 + dy ** 2;
-        let dist = sqrt(distSq);
+        const dist = sqrt(distSq);
 
         if (dist <= 50) {
           distSq = distSq < 1 ? 1 : distSq;
           let angle = atan2(dy, dx);
-          let force = (1 / max(distSq, 99)) * (-20 * lerp(-10, g, min(dist ** 0.8 * 0.03, 9)));
+          let force =
+            (1 / max(distSq, 99)) *
+            (-20 * lerp(-10, g, min(dist ** 0.8 * 0.03, 9)));
           let [nvx, nvy] = moveByAngle(p.vx, p.vy, angle, force);
           p.vx = nvx;
           p.vy = nvy;
@@ -92,7 +94,8 @@ setInterval(() => {
     p.vx *= damping;
     p.vy *= damping;
 
-    context.fillStyle = `hsl(${45 * p.type}, 50%, 50%, .5)`;
+    const hue = 360 / typesAmount * p.type;
+    context.fillStyle = `hsl(${hue}, 50%, 50%, .5)`;
     drawCircle(p.x, p.y);
   }
 }, 1000 / 60);
