@@ -6,8 +6,16 @@ const canvas = document.querySelector(`canvas`)!;
 document.body.appendChild(canvas);
 const context = canvas.getContext(`2d`)!;
 
-let V = 1, S = V, m = 34359738337;
-let random = () => (S = (185852 * S) % m) / m;
+const createRandom = (seed: number) => {
+  const m = 34359738337;
+  return () => {
+    seed = (185852 * seed) % m;
+    return seed / m;
+  }
+};
+
+let variation = 1;
+let random = createRandom(variation);
 
 type Particle = {
   x: number;
@@ -29,7 +37,7 @@ let drawCircle = (x: number, y: number) => {
 };
 
 let initialize = () => {
-  S = V++ % m;
+  random = createRandom(variation++);
   let width = (canvas.width = innerWidth);
   let height = (canvas.height = innerHeight);
 
@@ -92,7 +100,7 @@ setInterval(() => {
     p.vx *= damping;
     p.vy *= damping;
 
-    context.fillStyle = `hsl(${45 * p.type},50%,50%,.5)`;
+    context.fillStyle = `hsl(${45 * p.type}, 50%, 50%, .5)`;
     drawCircle(p.x, p.y);
   }
 }, 1000 / 60);
