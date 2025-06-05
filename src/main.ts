@@ -2,9 +2,9 @@ import { createRandom, lerp, moveByAngle } from "./lib";
 
 const { PI, sqrt, min, max, atan2, hypot } = Math;
 
-const canvas = document.querySelector(`canvas`)!;
-document.body.appendChild(canvas);
-const context = canvas.getContext(`2d`)!;
+const cnv = document.querySelector(`canvas`)!;
+document.body.appendChild(cnv);
+const ctx = cnv.getContext(`2d`)!;
 
 let variation = 1;
 let random = createRandom(variation);
@@ -25,15 +25,15 @@ const particles: Particle[] = [];
 const typesAmount = 6;
 
 const drawCircle = (x: number, y: number) => {
-  context.beginPath();
-  context.arc(x, y, 4, 0, 2 * PI);
-  context.fill();
+  ctx.beginPath();
+  ctx.arc(x, y, 4, 0, 2 * PI);
+  ctx.fill();
 };
 
 const init = () => {
   random = createRandom(variation++);
-  let width = (canvas.width = innerWidth);
-  let height = (canvas.height = innerHeight);
+  let width = (cnv.width = innerWidth);
+  let height = (cnv.height = innerHeight);
 
   for (let i = 0; i < typesAmount; i++) {
     rules[i] = [];
@@ -42,7 +42,7 @@ const init = () => {
     }
   }
 
-  for (let i = 0; i < 500; i++) {
+  for (let i = 0; i < 1000; i++) {
     let angle = random() * PI * 2;
     let radius = 50 * sqrt(random());
     let [x, y] = moveByAngle(width / 2, height / 2, angle, radius);
@@ -62,10 +62,10 @@ onclick = init;
 init();
 
 setInterval(() => {
-  const width = canvas.width;
-  const height = canvas.height;
-  context.fillStyle = "rgb(0,0,0,0.3)";
-  context.fillRect(0, 0, width, height);
+  const width = cnv.width;
+  const height = cnv.height;
+  ctx.fillStyle = "rgb(0,0,0,1)";
+  ctx.fillRect(0, 0, width, height);
 
   for (const p of particles) {
     const { x, y, type } = p;
@@ -108,7 +108,7 @@ setInterval(() => {
     p.visY = lerp(p.visY, p.y, 0.1);
 
     const hue = (360 / typesAmount) * p.type;
-    context.fillStyle = `hsl(${hue}, 50%, 50%, .5)`;
+    ctx.fillStyle = `hsl(${hue}, 50%, 50%, .5)`;
     drawCircle(p.visX, p.visY);
   }
 }, 1000 / 60);
