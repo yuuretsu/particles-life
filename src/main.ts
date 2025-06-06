@@ -7,7 +7,13 @@ const cnv = document.querySelector(`canvas`)!;
 document.body.appendChild(cnv);
 const ctx = cnv.getContext(`2d`)!;
 
-let variation = 1;
+function getVariationFromQuery(): number {
+  const params = new URLSearchParams(window.location.search);
+  const v = parseInt(params.get("variation") || "", 10);
+  return Number.isNaN(v) ? 1 : v;
+}
+
+let variation = getVariationFromQuery();
 let random = createRandom(variation);
 
 type Particle = {
@@ -30,16 +36,17 @@ const drawCircle = (x: number, y: number) => {
   ctx.fill();
 };
 
-const init = () => {
-  random = createRandom(variation++);
+function resetParticles() {
   const width = (cnv.width = innerWidth);
   const height = (cnv.height = innerHeight);
+
   for (let i = 0; i < typesAmount; i++) {
     rules[i] = [];
     for (let j = 0; j < typesAmount; j++) {
       rules[i][j] = 200 * (random() - 0.5);
     }
   }
+
   particles.length = 0;
   for (let i = 0; i < 1000; i++) {
     const angle = random() * PI * 2;
@@ -55,10 +62,22 @@ const init = () => {
       visY: y,
     };
   }
-};
+}
 
-onclick = init;
-init();
+function handleClick() {
+  variation++;
+  const params = new URLSearchParams(window.location.search);
+  params.set("variation", variation.toString());
+  history.replaceState(null, "", "?" + params.toString());
+
+  random = createRandom(variation);
+
+  resetParticles();
+}
+
+window.onclick = handleClick;
+
+resetParticles();
 
 setInterval(() => {
   const width = cnv.width;
