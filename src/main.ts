@@ -43,14 +43,14 @@ function resetParticles() {
   for (let i = 0; i < typesAmount; i++) {
     rules[i] = [];
     for (let j = 0; j < typesAmount; j++) {
-      rules[i][j] = 200 * (random() - 0.5);
+      rules[i][j] = 100 * (random() - 0.5);
     }
   }
 
   particles.length = 0;
-  for (let i = 0; i < 1000; i++) {
+  for (let i = 0; i < 3000; i++) {
     const angle = random() * PI * 2;
-    const radius = 50 * sqrt(random());
+    const radius = Math.min(width, height) / 2 * sqrt(random());
     const [x, y] = moveByAngle(width / 2, height / 2, angle, radius);
     particles[i] = {
       x,
@@ -114,11 +114,24 @@ setInterval(() => {
         p.vy = nvy;
       }
     }
+
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const dxCenter = centerX - p.x;
+    const dyCenter = centerY - p.y;
+    const distToCenter = sqrt(dxCenter * dxCenter + dyCenter * dyCenter);
+    const centerStrength = 0.002;
+    const angleToCenter = atan2(dyCenter, dxCenter);
+    const [cvx, cvy] = moveByAngle(0, 0, angleToCenter, distToCenter * centerStrength);
+    p.vx += cvx;
+    p.vy += cvy;
+
     if (hypot(p.vx, p.vy) > 10) {
       p.vx = 0;
       p.vy = 0;
       [p.x, p.y] = moveByAngle(p.x, p.y, random() * PI * 2, 100);
     }
+
     p.x += p.vx;
     p.y += p.vy;
     const damping = 0.2;
@@ -126,8 +139,16 @@ setInterval(() => {
     p.vy *= damping;
     p.visX = lerp(p.visX, p.x, 0.1);
     p.visY = lerp(p.visY, p.y, 0.1);
+    const distToReal = hypot(p.visX - p.x, p.visY - p.y);
     const hue = (360 / typesAmount) * p.type;
-    ctx.fillStyle = `hsl(${hue}, 50%, 50%, .5)`;
+    ctx.fillStyle = `hsl(${hue}, 100%, 50%, ${1 - distToReal * 0.01})`;
     drawCircle(p.visX, p.visY);
+    // ctx.beginPath();
+    // ctx.moveTo(p.visX, p.visY);
+    // ctx.lineTo(p.x, p.y);
+    // ctx.strokeStyle = `hsl(${hue}, 100%, 50%, ${1 - distToReal * 0.02})`;
+    // ctx.lineWidth = 4 - distToReal * 0.1;
+    // ctx.lineCap = "round";
+    // ctx.stroke();
   }
 }, 1000 / 60);
