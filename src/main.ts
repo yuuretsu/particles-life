@@ -108,7 +108,7 @@ setInterval(() => {
         const angle = atan2(dy, dx);
         const force =
           (1 / max(clampedDistSq, 99)) *
-          (-20 * lerp(-10, g, min(dist ** 0.8 * 0.03, 9)));
+          (-20 * lerp(-20, g, min(dist ** 0.8 * 0.03, 9)));
         const [nvx, nvy] = moveByAngle(p.vx, p.vy, angle, force);
         p.vx = nvx;
         p.vy = nvy;
@@ -129,7 +129,8 @@ setInterval(() => {
     if (hypot(p.vx, p.vy) > 10) {
       p.vx = 0;
       p.vy = 0;
-      [p.x, p.y] = moveByAngle(p.x, p.y, random() * PI * 2, 100);
+      const dist = Math.sqrt(Math.random()) * 100 + 100;
+      [p.x, p.y] = moveByAngle(p.x, p.y, random() * PI * 2, dist);
     }
 
     p.x += p.vx;
@@ -141,7 +142,8 @@ setInterval(() => {
     p.visY = lerp(p.visY, p.y, 0.1);
     const distToReal = hypot(p.visX - p.x, p.visY - p.y);
     const hue = (360 / typesAmount) * p.type;
-    ctx.fillStyle = `hsl(${hue}, 100%, 50%, ${1 - distToReal * 0.01})`;
+    ctx.globalCompositeOperation = "screen";
+    ctx.fillStyle = `hsl(${hue}, ${100 - distToReal * 5}%, ${50 + distToReal ** 2 * 0.1}%, ${1 - distToReal * 0.01})`;
     drawCircle(p.visX, p.visY);
     // ctx.beginPath();
     // ctx.moveTo(p.visX, p.visY);
@@ -151,4 +153,5 @@ setInterval(() => {
     // ctx.lineCap = "round";
     // ctx.stroke();
   }
+  ctx.globalCompositeOperation = "source-over";
 }, 1000 / 60);
