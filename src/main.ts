@@ -120,11 +120,16 @@ setInterval(() => {
     const dxCenter = centerX - p.x;
     const dyCenter = centerY - p.y;
     const distToCenter = sqrt(dxCenter * dxCenter + dyCenter * dyCenter);
-    const centerStrength = 0.002;
-    const angleToCenter = atan2(dyCenter, dxCenter);
-    const [cvx, cvy] = moveByAngle(0, 0, angleToCenter, distToCenter * centerStrength);
-    p.vx += cvx;
-    p.vy += cvy;
+
+    const attractionRadius = 300;
+    if (distToCenter > attractionRadius) {
+      const centerStrength = 0.02;
+      const angleToCenter = atan2(dyCenter, dxCenter);
+      const [cvx, cvy] = moveByAngle(0, 0, angleToCenter, (distToCenter - attractionRadius) * centerStrength);
+      p.vx += cvx;
+      p.vy += cvy;
+    }
+
 
     if (hypot(p.vx, p.vy) > 10) {
       p.vx = 0;
@@ -142,7 +147,6 @@ setInterval(() => {
     p.visY = lerp(p.visY, p.y, 0.1);
     const distToReal = hypot(p.visX - p.x, p.visY - p.y);
     const hue = (360 / typesAmount) * p.type;
-    ctx.globalCompositeOperation = "screen";
     ctx.fillStyle = `hsl(${hue}, ${100 - distToReal * 5}%, ${50 + distToReal ** 2 * 0.1}%, ${1 - distToReal * 0.01})`;
     drawCircle(p.visX, p.visY);
     // ctx.beginPath();
@@ -153,5 +157,4 @@ setInterval(() => {
     // ctx.lineCap = "round";
     // ctx.stroke();
   }
-  ctx.globalCompositeOperation = "source-over";
 }, 1000 / 60);
