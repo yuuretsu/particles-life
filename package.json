@@ -9,8 +9,12 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@types/d3-quadtree": "^3.0.6",
     "typescript": "~5.8.3",
     "vite": "^6.3.5",
     "vite-tsconfig-paths": "^5.1.4"
+  },
+  "dependencies": {
+    "d3-quadtree": "^3.0.1"
   }
 }
