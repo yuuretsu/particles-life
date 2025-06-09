@@ -48,7 +48,7 @@ function resetParticles() {
   }
 
   particles.length = 0;
-  for (let i = 0; i < 4000; i++) {
+  for (let i = 0; i < 3000; i++) {
     const angle = random() * PI * 2;
     const radius = Math.min(width, height) / 2 * sqrt(random());
     const [x, y] = moveByAngle(width / 2, height / 2, angle, radius);
@@ -90,7 +90,7 @@ setInterval(() => {
     .y(d => d.y)
     .addAll(particles);
 
-  for (const p of particles) {
+  for (const [i, p] of particles.entries()) {
     const { x, y, type } = p;
     const radius = 50;
 
@@ -152,8 +152,27 @@ setInterval(() => {
     p.visX = lerp(p.visX, p.x, 0.2);
     p.visY = lerp(p.visY, p.y, 0.2);
     // const distToReal = hypot(p.visX - p.x, p.visY - p.y);
-    const hue = (360 / typesAmount) * p.type;
-    ctx.fillStyle = `hsl(${hue}, ${100}%, ${50}%, ${1})`;
-    drawCircle(p.visX, p.visY);
+    const localRandom = createRandom(i);
+    localRandom();
+    localRandom();
+    const hue = (360 / typesAmount) * p.type + localRandom() * 10;
+    // ctx.fillStyle = `hsl(${hue}, ${100}%, ${50}%, ${1})`;
+    // drawCircle(p.visX, p.visY);
+
+    ctx.beginPath();
+    const visSpeed = hypot(p.vx, p.vy);
+    const visAngle = atan2(p.visY - p.y, p.visX - p.x) + PI / 2;
+    ctx.ellipse(p.visX, p.visY, 6, lerp(6, 8, visSpeed * 2), visAngle, 0, 2 * PI);
+    ctx.fillStyle = `hsl(${hue}, ${50 + localRandom() * 50}%, ${50 + (localRandom() - 0.5) * 25}%, ${1})`;
+    ctx.fill();
+
+
+    // ctx.beginPath();
+    // ctx.moveTo(p.x, p.y);
+    // ctx.lineTo(p.visX, p.visY);
+    // ctx.strokeStyle = `hsl(${hue}, ${100}%, ${50}%, ${1})`;
+    // ctx.lineWidth = 4;
+    // ctx.lineCap = "round";
+    // ctx.stroke();
   }
 }, 1000 / 60);
