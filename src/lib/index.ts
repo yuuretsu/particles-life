@@ -6,9 +6,11 @@ export let moveByAngle = (x: number, y: number, angle: number, distance: number)
 ];
 
 export const createRandom = (seed: number) => {
-  const m = 34359738337;
-  return () => {
-    seed = (185852 * seed) % m;
-    return seed / m;
-  }
+    return function() {
+      var t = seed += 0x6D2B79F5;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
 };
+
