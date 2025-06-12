@@ -28,17 +28,12 @@ type Particle = {
 
 const rules: number[][] = [];
 const particles: Particle[] = [];
-const typesAmount = 6;
-
-const drawCircle = (x: number, y: number) => {
-  ctx.beginPath();
-  ctx.arc(x, y, 3, 0, 2 * PI);
-  ctx.fill();
-};
+let typesAmount = 6;
 
 function resetParticles() {
   const width = (cnv.width = innerWidth);
   const height = (cnv.height = innerHeight);
+  typesAmount = Math.floor(2 + random() * 6);
 
   for (let i = 0; i < typesAmount; i++) {
     rules[i] = [];
@@ -152,13 +147,16 @@ setInterval(() => {
     p.visX = lerp(p.visX, p.x, 0.2);
     p.visY = lerp(p.visY, p.y, 0.2);
     const localRandom = createRandom(i);
-    const hue = (360 / typesAmount) * p.type + localRandom() * 5;
-
+    
     ctx.beginPath();
-    const visSpeed = hypot(p.vx, p.vy);
+    const visSpeed = hypot(p.visX - p.x, p.visX - p.x);
     const visAngle = atan2(p.visY - p.y, p.visX - p.x) + PI / 2;
-    ctx.ellipse(p.visX, p.visY, 6, lerp(6, 8, visSpeed * 2), visAngle, 0, 2 * PI);
-    ctx.fillStyle = `hsl(${hue}, ${50 + localRandom() * 10}%, ${50 + (localRandom() - 0.5) * 25}%, ${1})`;
+    ctx.ellipse(p.visX, p.visY, 6, lerp(6, 8, visSpeed * 0.2), visAngle, 0, 2 * PI);
+    const hue = (360 / typesAmount) * p.type + localRandom() * 5;
+    const saturation = 50 + localRandom() * 10;
+    const lightness = 50 + (localRandom() - 0.5) * 25;
+    const alpha = 1 - visSpeed * 0.01;
+    ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%, ${alpha})`;
     ctx.fill();
   }
 }, 1000 / 60);
