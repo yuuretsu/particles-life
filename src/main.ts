@@ -27,7 +27,7 @@ const resetEvent = Event.create<void>();
 const clickEvent = Event.create<void>();
 const tickEvent = Event.create<void>();
 
-resizeEvent.subscribe(() => {
+resizeEvent.watch(() => {
   width = window.innerWidth;
   height = window.innerHeight;
   cx = width / 2;
@@ -39,7 +39,7 @@ resizeEvent.subscribe(() => {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 });
 
-resetEvent.subscribe(() => {
+resetEvent.watch(() => {
   typesAmount = Math.floor(2 + random() * 6);
   for (let i = 0; i < typesAmount; i++) {
     rules[i] = [];
@@ -56,7 +56,7 @@ resetEvent.subscribe(() => {
   }
 });
 
-clickEvent.subscribe(() => {
+clickEvent.watch(() => {
   variation++;
   const params = new URLSearchParams(window.location.search);
   params.set("variation", variation.toString());
@@ -65,7 +65,7 @@ clickEvent.subscribe(() => {
   resetEvent();
 });
 
-tickEvent.subscribe(() => {
+tickEvent.watch(() => {
   ctx.save();
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.fillStyle = "rgb(0,0,0,1)";

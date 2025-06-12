@@ -10,7 +10,7 @@ export const create = <Data>() => {
       }
     },
     {
-      subscribe: (listener: Event<Data>) => {
+      watch: (listener: Event<Data>) => {
         listeners.add(listener);
         return () => {
           listeners.delete(listener);
