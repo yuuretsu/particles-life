@@ -1,3 +1,6 @@
+export * as Event from './event';
+export * from './throttle';
+
 export const lerp = (a: number, b: number, t: number) => a * (1 - t) + b * t;
 
 export let moveByAngle = (x: number, y: number, angle: number, distance: number) => [
@@ -13,4 +16,3 @@ export const createRandom = (seed: number) => {
       return ((t ^ t >>> 14) >>> 0) / 4294967296;
     }
 };
-
